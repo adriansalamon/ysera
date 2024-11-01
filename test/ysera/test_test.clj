@@ -9,4 +9,5 @@
     (ysera.test/testing "that 1 equals 1" (= 1 1))
     (ysera.test/error? (ysera.error/error "an error!"))
     (ysera.test/is= 1 1)
-    (ysera.test/is-not (= 1 2))))
+    (ysera.test/is-not (= 1 2))
+    (ysera.test/match= {:a 1 :b 2} {:b 2})))

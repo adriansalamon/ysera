@@ -26,6 +26,22 @@
          (macros/case :clj (clojure.test/is (= actual# expected#))
                       :cljs (cljs.test/is (= actual# expected#))))))
 
+
+  (defmacro match= [actual expected]
+    `(do
+       (let [actual# ~actual
+             expected# ~expected
+             mismatches# (find-mismatches actual# expected#)
+             equal# (empty? mismatches#)]
+         (when-not equal#
+           (println "Mismatches found:")
+           (doseq [mismatch# mismatches#]
+             (println " - Key:" (:key mismatch#)
+                      "\n   Actual:  \t" (:actual mismatch#)
+                      "\n   Expected:\t" (:expected mismatch#))))
+         (macros/case :clj (clojure.test/is equal#)
+                      :cljs (cljs.test/is equal#)))))
+
   (defmacro deftest [name & body]
     `(do
        (macros/case :clj (clojure.test/deftest ~name ~@body)
@@ -57,3 +73,16 @@
                                        (cljs.test/is false ~(str "An error was expected: " actual)))
                                    (catch js/Object e#
                                      (cljs.test/is true)))))))
+
+
+(defn find-mismatches
+  "Finds keys in expected that are not equal to the corresponding keys in actual."
+  [actual expected]
+  (reduce (fn [acc key]
+            (let [actual-val (get actual key)
+                  expected-val (get expected key)]
+              (if (= actual-val expected-val)
+                acc
+                (conj acc {:key key, :actual actual-val, :expected expected-val}))))
+          []
+          (keys expected)))
