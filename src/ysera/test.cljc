@@ -20,11 +20,11 @@
     `(do
        (let [actual# ~actual
              expected# ~expected
-             equal# (= actual# expected#)]
+             equal# (= expected# actual#)]
          (when-not equal#
            (println "Actual:\t\t" actual# "\nExpected:\t" expected#))
-         (macros/case :clj (clojure.test/is (= actual# expected#))
-                      :cljs (cljs.test/is (= actual# expected#))))))
+         (macros/case :clj (clojure.test/is (= expected# actual#))
+                      :cljs (cljs.test/is (= expected# actual#))))))
 
   (defmacro deftest [name & body]
     `(do
